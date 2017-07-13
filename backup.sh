@@ -94,6 +94,11 @@ elif [ "$MODE" == "archive" ]; then
     exit 3
   fi
   
+  if [ `cat "${SOURCE}/state"` != "done" ]; then
+    >&2 echo $(date -u) "error: trying to archive dirty backup: $SOURCE"
+    exit 4
+  fi
+  
   cp "${SOURCE}/log" "${CURRENT}"
   
   echo $(date -u) "archive $SOURCE to $CURRENT"
