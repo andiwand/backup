@@ -36,7 +36,7 @@ function redirect() {
 }
 function undirect() {
   exec 1>&7 7>&-
-  exec 1>&8 8>&-
+  exec 2>&8 8>&-
 }
 
 # validate args
