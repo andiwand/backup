@@ -14,9 +14,10 @@ function roll() {
   
   local LOG="${1}/log"
   
-  redirect
-  
+  redirect "$LOG"
   echo $(date -u) "roll backup: $1 to $NEXT"
+  undirect
+  
   if [ "$NUM" -eq 0 ]; then
     mkdir -p "${NEXT}/data"
     find "$1" -maxdepth 1 -type f -exec mv {} "$NEXT" \;
@@ -24,15 +25,13 @@ function roll() {
   else
     mv "$1" "$NEXT"
   fi
-  
-  undirect
 }
 
 # log redirection
 function redirect() {
   exec 7>&1
   exec 8>&2
-  exec > >(tee -a "$LOG") 2> >(tee -a "$LOG" >&2)
+  exec 1> >(tee -a "$1") 2> >(tee -a "$1" 1>&2)
 }
 function undirect() {
   exec 1>&7 7>&-
@@ -74,7 +73,7 @@ fi
 LOG="${CURRENT}/log"
 STATE="${CURRENT}/state"
 
-redirect
+redirect "$LOG"
 
 # set dirty state
 echo "dirty" > "$STATE"
@@ -121,4 +120,3 @@ if [ ! -z "$COUNT" ]; then
     rm -rf "$OLD"
   fi
 fi
-
