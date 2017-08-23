@@ -81,7 +81,7 @@ echo "dirty" > "$STATE"
 # backup / archive
 if [ "$MODE" == "backup" ]; then
   echo $(date -u) "backup $SOURCE to $CURRENT"
-  echo $(date -u) rsync -av --delete "$SOURCE" "${CURRENT}/data"
+  echo $(date -u) rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data"
   rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data"
   echo $(date -u) "backup done"
   
