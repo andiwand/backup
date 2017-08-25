@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # state stays dirty until everything is successfully done
 # the backup log should only contain information about the backup itself
