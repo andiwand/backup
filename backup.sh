@@ -19,9 +19,8 @@ function roll() {
   undirect
   
   if [ "$NUM" -eq 0 ]; then
-    mkdir -p "${NEXT}/data"
     find "$1" -maxdepth 1 -type f -exec mv {} "$NEXT" \;
-    cp -al "${1}/data" "${NEXT}/data"
+    cp -al "${1}/data" "${NEXT}"
   else
     mv "$1" "$NEXT"
   fi
