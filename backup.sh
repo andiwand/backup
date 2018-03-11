@@ -54,7 +54,7 @@ FORMAT="%0${ZERO_PREFIX}d"
 CURRENT="${BACKUP_DIR}/$(printf $FORMAT 0)"
 
 if [ -d "$CURRENT" ]; then
-  if [ ! -z "$DONT_ROLL" ]; then
+  if [ -z "$DONT_ROLL" ]; then
     echo $(date -u) "roll"
     roll "$CURRENT"
   else
