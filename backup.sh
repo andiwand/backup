@@ -75,7 +75,7 @@ echo "dirty" > "$STATE"
 if [ "$MODE" == "backup" ]; then
   echo $(date -u) "backup $SOURCE to $CURRENT" 2>&1 | tee -a "$LOG"
   echo $(date -u) rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
-  rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
+  $RSYNC -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
   echo $(date -u) "backup done" 2>&1 | tee -a "$LOG"
   
   # touch to reflect date
