@@ -54,8 +54,14 @@ FORMAT="%0${ZERO_PREFIX}d"
 CURRENT="${BACKUP_DIR}/$(printf $FORMAT 0)"
 
 if [ -d "$CURRENT" ]; then
-  roll "$CURRENT"
+  if [ ! -z "$DONT_ROLL" ]; then
+    echo $(date -u) "roll"
+    roll "$CURRENT"
+  else
+    echo $(date -u) "skipped roll"
+  fi
 else
+  echo $(date -u) "first backup"
   mkdir -p "${CURRENT}/data"
 fi
 
