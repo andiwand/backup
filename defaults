@@ -1,6 +1,7 @@
 SOURCE=
 BACKUP_DIR=
 COUNT=
+RSYNC=/usr/bin/env rsync
 RSYNC_ARGS=
 MODE=backup
 ZERO_PREFIX=3
