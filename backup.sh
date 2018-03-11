@@ -14,27 +14,17 @@ function roll() {
   
   local LOG="${1}/log"
   
-  redirect "$LOG"
-  echo $(date -u) "roll backup: $1 to $NEXT"
-  undirect
+  echo $(date -u) "roll backup: $1 to $NEXT" 2>&1 | tee -a "$LOG"
   
   if [ "$NUM" -eq 0 ]; then
+    mkdir -p "$NEXT"
     find "$1" -maxdepth 1 -type f -exec mv {} "$NEXT" \;
-    cp -al "${1}/data" "${NEXT}"
+    echo $(date -u) "cp -al ${1}/data $NEXT" 2>&1 | tee -a "$LOG"
+    cp -al "${1}/data" "$NEXT"
   else
+    echo $(date -u) "mv $1 $NEXT" 2>&1 | tee -a "$LOG"
     mv "$1" "$NEXT"
   fi
-}
-
-# log redirection
-function redirect() {
-  exec 7>&1
-  exec 8>&2
-  exec 1> >(tee -a "$1") 2> >(tee -a "$1" 1>&2)
-}
-function undirect() {
-  exec 1>&7 7>&-
-  exec 2>&8 8>&-
 }
 
 # validate args
@@ -72,17 +62,15 @@ fi
 LOG="${CURRENT}/log"
 STATE="${CURRENT}/state"
 
-redirect "$LOG"
-
 # set dirty state
 echo "dirty" > "$STATE"
 
 # backup / archive
 if [ "$MODE" == "backup" ]; then
-  echo $(date -u) "backup $SOURCE to $CURRENT"
-  echo $(date -u) rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data"
-  rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data"
-  echo $(date -u) "backup done"
+  echo $(date -u) "backup $SOURCE to $CURRENT" 2>&1 | tee -a "$LOG"
+  echo $(date -u) rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
+  rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
+  echo $(date -u) "backup done" 2>&1 | tee -a "$LOG"
   
   # touch to reflect date
   touch "${CURRENT}"
@@ -97,16 +85,14 @@ elif [ "$MODE" == "archive" ]; then
     exit 4
   fi
   
-  cp "${SOURCE}/log" "${CURRENT}"
+  cp "${SOURCE}/log" "$CURRENT" 2>&1 | tee -a "$LOG"
   
-  echo $(date -u) "archive $SOURCE to $CURRENT"
-  cp -al "${SOURCE}/data" "${CURRENT}/data"
+  echo $(date -u) "archive $SOURCE to $CURRENT" 2>&1 | tee -a "$LOG"
+  cp -al "${SOURCE}/data" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
 else
   >&2 echo $(date -u) "error: unknown mode: $MODE"
   exit 2
 fi
-
-undirect
 
 # clear state
 echo "done" > "$STATE"
