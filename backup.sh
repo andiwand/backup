@@ -12,20 +12,24 @@ fi
 # load config
 source "$1"
 
-LOG="${CURRENT}/log"
-STATE="${CURRENT}/state"
+LOG="${BACKUP_DIR}/log"
+STATE="${BACKUP_DIR}/state"
+
+mkdir -p "${BACKUP_DIR}"
 
 # set dirty state
 echo "dirty" > "$STATE"
 
 # backup
-echo $(date -u) "backup $SOURCE to $CURRENT" 2>&1 | tee -a "$LOG"
-echo $(date -u) rsync -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
-$RSYNC -av --delete $RSYNC_ARGS "$SOURCE" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
+echo $(date -u) "backup $SOURCE to $BACKUP_DIR" 2>&1 | tee -a "$LOG"
+echo $(date -u) rsync -av --delete $RSYNC_ARGS "$SOURCE" "${BACKUP_DIR}/data" 2>&1 | tee -a "$LOG"
+
+$RSYNC -av --delete $RSYNC_ARGS "$SOURCE" "${BACKUP_DIR}/data" 2>&1 | tee -a "$LOG"
+
 echo $(date -u) "backup done" 2>&1 | tee -a "$LOG"
 
 # touch to reflect date
-touch "$CURRENT"
+touch "$BACKUP_DIR"
 
 # clear state
 echo "done" > "$STATE"

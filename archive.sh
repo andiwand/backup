@@ -12,10 +12,21 @@ function roll() {
   fi
   
   local LOG="${1}/log"
+  local STATE="${1}/state"
   
   echo $(date -u) "roll backup: $1 to $NEXT" 2>&1 | tee -a "$LOG"
   echo $(date -u) "mv $1 $NEXT" 2>&1 | tee -a "$LOG"
+  
+  # set dirty state
+  echo "dirty roll" > "$STATE"
+  
   mv "$1" "$NEXT"
+  STATE="${NEXT}/state"
+  
+  echo $(date -u) "roll done" 2>&1 | tee -a "$LOG"
+  
+  # clear state
+  echo "done" > "$STATE"
 }
 
 # validate args
@@ -35,9 +46,6 @@ STATE="${CURRENT}/state"
 if [ -d "$CURRENT" ]; then
   echo $(date -u) "roll"
   roll "$CURRENT"
-else
-  echo $(date -u) "first backup"
-  mkdir -p "${CURRENT}/data"
 fi
 
 # archive
@@ -51,13 +59,19 @@ if [ `cat "${BACKUP_DIR}/state"` != "done" ]; then
   exit 4
 fi
 
+mkdir -p "${CURRENT}"
+
 # set dirty state
 echo "dirty archive" > "$STATE"
 
-cp "${BACKUP_DIR}/log" "$CURRENT" 2>&1 | tee -a "$LOG"
+cp "${BACKUP_DIR}/log" "$CURRENT"
 
 echo $(date -u) "archive $BACKUP_DIR to $CURRENT" 2>&1 | tee -a "$LOG"
-cp -al "${BACKUP_DIR}/data" "${CURRENT}/data" 2>&1 | tee -a "$LOG"
+echo $(date -u) "cp -al ${BACKUP_DIR}/data $CURRENT" 2>&1 | tee -a "$LOG"
+
+cp -al "${BACKUP_DIR}/data" "$CURRENT" 2>&1 | tee -a "$LOG"
+
+echo $(date -u) "archive done" 2>&1 | tee -a "$LOG"
 
 # clear state
 echo "done" > "$STATE"
