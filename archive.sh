@@ -21,6 +21,7 @@ function roll() {
   echo "dirty roll" > "$STATE"
   
   mv "$1" "$NEXT"
+  LOG="${NEXT}/log"
   STATE="${NEXT}/state"
   
   echo $(date -u) "roll done" 2>&1 | tee -a "$LOG"

@@ -22,7 +22,7 @@ echo "dirty" > "$STATE"
 
 # backup
 echo $(date -u) "backup $SOURCE to $BACKUP_DIR" 2>&1 | tee -a "$LOG"
-echo $(date -u) rsync -av --delete $RSYNC_ARGS "$SOURCE" "${BACKUP_DIR}/data" 2>&1 | tee -a "$LOG"
+echo $(date -u) "$RSYNC -av --delete $RSYNC_ARGS $SOURCE ${BACKUP_DIR}/data" 2>&1 | tee -a "$LOG"
 
 $RSYNC -av --delete $RSYNC_ARGS "$SOURCE" "${BACKUP_DIR}/data" 2>&1 | tee -a "$LOG"
 
