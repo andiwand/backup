@@ -5,7 +5,7 @@ set -e
 
 function roll() {
   local NUM=`basename $1`
-  local NEXT=$((NUM + 1))
+  local NEXT=$((10#$NUM + 1))
   NEXT="${ARCHIVE_DIR}/$(printf $FORMAT $NEXT)"
   if [ -d "$NEXT" ]; then
     roll "$NEXT"
